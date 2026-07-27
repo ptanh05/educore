@@ -1,18 +1,44 @@
 <template>
 	<svg
 		width="80"
-		height="79"
-		viewBox="0 0 80 79"
+		height="80"
+		viewBox="0 0 80 80"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 	>
+		<!-- Viettel Red Rounded Badge Background -->
+		<rect width="80" height="80" rx="20" fill="url(#viettel_logo_grad)" />
+		<!-- Graduation Cap & Book Motif -->
+		<path d="M40 18L18 30L40 42L62 30L40 18Z" fill="#FFFFFF" />
 		<path
-			d="M57.1285 0.580383H22.8514C10.2309 0.580383 0 10.5649 0 22.8815V56.3332C0 68.6497 10.2309 78.6343 22.8514 78.6343H57.1285C69.749 78.6343 79.9799 68.6497 79.9799 56.3332V22.8815C79.9799 10.5649 69.749 0.580383 57.1285 0.580383Z"
-			fill="#0E7159"
+			d="M62 30V43.5C62 43.5 56 47 40 47C24 47 18 43.5 18 43.5V30"
+			stroke="#FFFFFF"
+			stroke-width="3"
+			stroke-linecap="round"
 		/>
+		<!-- Open Book Lines -->
 		<path
-			d="M62.8434 23.6906L60.7869 23.1052C53.6744 21.0702 45.9048 22.4641 39.992 26.8128C35.8502 23.7742 30.7943 22.1854 25.7099 22.2133H17.1406V27.8163H25.7099C29.6232 27.8163 33.508 29.015 36.6787 31.3845L39.992 33.8377L43.3056 31.3845C47.2475 28.4575 52.3032 27.2588 57.1306 28.0393V50.647C51.1035 49.9223 44.9051 51.4834 39.992 55.0795C35.8502 52.0688 30.8515 50.4798 25.7671 50.4798C24.7959 50.4798 23.8247 50.5355 22.8535 50.647V35.0642H17.1406V57.0588H62.8434V23.7185V23.6906Z"
-			fill="white"
+			d="M24 50C31 49 37 51 40 55C43 51 49 49 56 50V62C49 61 43 63 40 66C37 63 31 61 24 62V50Z"
+			fill="#FFFFFF"
+			fill-opacity="0.9"
 		/>
+		<!-- Viettel Star Accent -->
+		<path
+			d="M40 25L41.5 28.5L45 29L42.5 31.5L43 35L40 33L37 35L37.5 31.5L35 29L38.5 28.5L40 25Z"
+			fill="#EE0033"
+		/>
+		<defs>
+			<linearGradient
+				id="viettel_logo_grad"
+				x1="0"
+				y1="0"
+				x2="80"
+				y2="80"
+				gradientUnits="userSpaceOnUse"
+			>
+				<stop stop-color="#EE0033" />
+				<stop offset="1" stop-color="#B80024" />
+			</linearGradient>
+		</defs>
 	</svg>
 </template>

@@ -35,10 +35,10 @@ export const sessionStore = defineStore('lms-session', () => {
 		cache: 'brand',
 		auto: true,
 		onSuccess(data) {
-			brand.name = data.app_name
-			brand.logo = data.app_logo
+			brand.name = data.app_name || 'Viettel Academy'
+			brand.logo = data.app_logo || '/viettel_academy_logo.svg'
 			brand.favicon =
-				data.favicon?.file_url || '/assets/lms/frontend/learning.svg'
+				data.favicon?.file_url || '/learning.svg'
 		},
 	})
 

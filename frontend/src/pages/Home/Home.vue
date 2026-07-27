@@ -140,7 +140,7 @@ const subtitle = computed(() => {
 				evalSuffix
 			)
 		}
-		return __('Manage your courses and batches at a glance')
+		return __('Quản lý khóa học và lớp học Viettel Academy')
 	} else {
 		let liveClassSuffix =
 			myLiveClasses.data?.length > 1 ? __('live classes') : __('live class')
@@ -163,7 +163,7 @@ const subtitle = computed(() => {
 				evalSuffix
 			)
 		}
-		return __('Resume where you left off')
+		return __('Chào mừng bạn đến với hệ thống đào tạo Viettel Academy')
 	}
 })
 

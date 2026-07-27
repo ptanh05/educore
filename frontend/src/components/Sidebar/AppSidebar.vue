@@ -201,7 +201,7 @@
 							"
 						/>
 					</Tooltip>
-					<Tooltip :text="__('Powered by Frappe Learning')">
+					<Tooltip :text="__('Viettel Academy | EduCore LMS')">
 						<span
 							class="lucide-zap size-4 text-ink-gray-7 cursor-pointer"
 							@click="redirectToWebsite()"
