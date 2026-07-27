@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import frappe
 from lms.lms.utils import create_user
 
