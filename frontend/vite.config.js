@@ -13,15 +13,19 @@ export default defineConfig(async ({ mode }) => {
 		},
 		plugins: [
 			frappeui({
-				frappeProxy: true,
+				frappeProxy: {
+					port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 8085,
+				},
 				lucideIcons: true,
 				jinjaBootData: true,
 				buildConfig: {
+					outDir: path.resolve(__dirname, '../lms/public/frontend'),
 					indexHtmlPath: '../lms/www/_lms.html',
 				},
 			}),
 			vue(),
 			VitePWA({
+				disable: process.env.DISABLE_PWA === 'true',
 				registerType: 'autoUpdate',
 				devOptions: {
 					enabled: false,
@@ -29,7 +33,6 @@ export default defineConfig(async ({ mode }) => {
 				workbox: {
 					cleanupOutdatedCaches: true,
 					maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-					globDirectory: '/assets/lms/frontend',
 					globPatterns: ['**/*.{js,ts,css,html,svg}'],
 					runtimeCaching: [
 						{
@@ -65,6 +68,7 @@ export default defineConfig(async ({ mode }) => {
 		resolve: {
 			alias: {
 				'@': path.resolve(__dirname, 'src'),
+				'../../../../sites/common_site_config.json': path.resolve(__dirname, 'src/common_site_config_fallback.json'),
 			},
 			// Force one copy of prosemirror; duplicate copies break tiptap's
 			// instanceof checks and crash the list buttons.
