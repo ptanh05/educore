@@ -54,7 +54,7 @@ Phù hợp khi bạn chỉ làm việc trên UI Vue 3 hoặc chạy unit tests.
    ```bash
    npm run dev
    ```
-   Ứng dụng sẽ chạy tại `http://localhost:8080`.
+   Ứng dụng sẽ chạy tại `http://localhost:8085`.
 
 4. **Chạy Unit Test:**
    ```bash

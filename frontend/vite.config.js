@@ -13,7 +13,9 @@ export default defineConfig(async ({ mode }) => {
 		},
 		plugins: [
 			frappeui({
-				frappeProxy: true,
+				frappeProxy: {
+					port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 8085,
+				},
 				lucideIcons: true,
 				jinjaBootData: true,
 				buildConfig: {

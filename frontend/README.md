@@ -31,7 +31,7 @@ npm install
 ```bash
 npm run dev
 ```
-Dev server sẽ khởi chạy tại `http://localhost:8080` (hoặc port proxy cấu hình trong `vite.config.js`).
+Dev server sẽ khởi chạy tại `http://localhost:8085` (hoặc port cấu hình qua biến `VITE_PORT`).
 
 > [!TIP]
 > Để không bị lỗi CSRF khi gọi API tới Frappe Backend `:8000`, thêm cấu hình sau vào `site_config.json` của Frappe site:
