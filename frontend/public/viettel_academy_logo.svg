@@ -1,0 +1,18 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Emblem Badge -->
+  <g transform="translate(5, 5) scale(0.625)">
+    <rect width="80" height="80" rx="20" fill="url(#viettel_h_grad)"/>
+    <path d="M40 18L18 30L40 42L62 30L40 18Z" fill="#FFFFFF"/>
+    <path d="M62 30V43.5C62 43.5 56 47 40 47C24 47 18 43.5 18 43.5V30" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+    <path d="M24 50C31 49 37 51 40 55C43 51 49 49 56 50V62C49 61 43 63 40 66C37 63 31 61 24 62V50Z" fill="#FFFFFF" fill-opacity="0.9"/>
+  </g>
+  <!-- Text Branding -->
+  <text x="65" y="32" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="800" font-size="18" fill="#EE0033" letter-spacing="0.5">VIETTEL</text>
+  <text x="65" y="48" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="13" fill="#334155" letter-spacing="1">ACADEMY</text>
+  <defs>
+    <linearGradient id="viettel_h_grad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EE0033"/>
+      <stop offset="1" stop-color="#B80024"/>
+    </linearGradient>
+  </defs>
+</svg>

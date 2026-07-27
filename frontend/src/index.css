@@ -2,10 +2,40 @@
 @import 'frappe-ui/list-style.css';
 @import './styles/blockEditor.css';
 
+/* Viettel Academy Brand Tokens */
+:root {
+	--viettel-red: #EE0033;
+	--viettel-red-dark: #C7002B;
+	--viettel-red-light: #FFF0F3;
+	--viettel-red-subtle: rgba(238, 0, 51, 0.08);
+}
+
 /* This build makes --surface-sidebar transparent in dark mode; point it at
    gray-1 so the sidebar keeps a visible surface. */
 [data-theme='dark'] {
 	--surface-sidebar: var(--surface-gray-1);
+	--viettel-red-subtle: rgba(238, 0, 51, 0.18);
+}
+
+/* Viettel Brand Utility Classes */
+.bg-viettel-red {
+	background-color: var(--viettel-red) !important;
+}
+
+.bg-viettel-red-dark {
+	background-color: var(--viettel-red-dark) !important;
+}
+
+.bg-viettel-red-light {
+	background-color: var(--viettel-red-light) !important;
+}
+
+.text-viettel-red {
+	color: var(--viettel-red) !important;
+}
+
+.border-viettel-red {
+	border-color: var(--viettel-red) !important;
 }
 
 /* frappe-ui beta.7 FormLabel differs from InputLabel; match standalone labels

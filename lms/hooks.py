@@ -3,11 +3,11 @@ import frappe
 from . import __version__ as app_version
 
 app_name = "frappe_lms"
-app_title = "Learning"
-app_publisher = "Frappe"
-app_description = "Open Source Learning Management System built with Frappe Framework"
+app_title = "Viettel Academy"
+app_publisher = "Viettel Academy"
+app_description = "Hệ thống Quản lý Học tập Viettel Academy - EduCore LMS"
 app_icon_url = "/assets/lms/images/lms-logo.png"
-app_icon_title = "Learning"
+app_icon_title = "Viettel Academy"
 app_icon_route = "/lms"
 app_color = "grey"
 app_email = "jannat@frappe.io"

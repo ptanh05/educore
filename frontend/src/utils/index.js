@@ -540,6 +540,9 @@ const getSidebarItems = (forMobile = false) => {
 					icon: 'Briefcase',
 					to: 'Jobs',
 					activeFor: ['Jobs', 'JobDetail'],
+					condition: () => {
+						return settings.data?.allow_job_posting && settings.data?.jobs
+					},
 				},
 				{
 					label: 'Statistics',
