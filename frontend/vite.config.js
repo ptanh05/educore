@@ -99,14 +99,10 @@ async function importFrappeUIPlugin(isDev) {
 		try {
 			const module = await import('../frappe-ui/vite')
 			return module.default
-		} catch (error) {
-			console.warn(
-				'Local frappe-ui not found, falling back to npm package:',
-				error.message
-			)
+		} catch (_) {
+			// Fallback to installed npm package quietly
 		}
 	}
-	// Fall back to npm package if local import fails
 	const module = await import('frappe-ui/vite')
 	return module.default
 }
