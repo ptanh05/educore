@@ -25,7 +25,10 @@ sed -i '/redis/d' ./Procfile
 sed -i '/watch/d' ./Procfile
 
 bench get-app payments
-bench get-app lms
+ln -s /workspace apps/lms
+env/bin/pip install -e apps/lms
+echo "" >> sites/apps.txt
+echo "lms" >> sites/apps.txt
 
 bench new-site lms.localhost \
 --force \
@@ -35,6 +38,9 @@ bench new-site lms.localhost \
 
 bench --site lms.localhost install-app payments
 bench --site lms.localhost install-app lms
+bench --site lms.localhost set-config ignore_csrf 1
+bench --site lms.localhost console < /workspace/docker/create_user.py
+bench --site lms.localhost clear-cache
 bench --site lms.localhost set-config developer_mode 1
 bench --site lms.localhost clear-cache
 bench use lms.localhost

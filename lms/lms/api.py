@@ -45,6 +45,7 @@ from lms.lms.utils import (
 	get_evaluator,
 	get_field_meta,
 	get_instructors,
+	get_lesson_index,
 	get_lms_route,
 	has_course_instructor_role,
 	has_evaluator_role,
@@ -2017,6 +2018,159 @@ def get_streak_info():
 	return {
 		"current_streak": current_streak,
 		"longest_streak": longest_streak,
+	}
+
+
+@frappe.whitelist()
+def get_student_dashboard():
+	if frappe.session.user == "Guest":
+		return None
+
+	user = frappe.session.user
+
+	# 1. Stats summary
+	enrolled_courses_count = frappe.db.count("LMS Enrollment", {"member": user})
+	enrolled_batches_count = frappe.db.count("LMS Batch Enrollment", {"member": user})
+	completed_lessons_count = frappe.db.count("LMS Course Progress", {"member": user, "status": "Complete"})
+	certificates_count = frappe.db.count("LMS Certificate", {"member": user})
+
+	all_dates = fetch_activity_dates(user)
+	streak, longest_streak = calculate_streaks(all_dates)
+	current_streak = calculate_current_streak(all_dates, streak)
+
+	# 2. Continue learning (most recent active enrolled course)
+	continue_learning = None
+	recent_enrollments = frappe.get_all(
+		"LMS Enrollment",
+		{"member": user},
+		["course", "current_lesson", "progress"],
+		order_by="modified desc",
+		limit=1,
+	)
+
+	if recent_enrollments:
+		rec = recent_enrollments[0]
+		course_doc = frappe.db.get_value(
+			"LMS Course",
+			rec.course,
+			["name", "title", "image", "card_gradient", "short_introduction"],
+			as_dict=1,
+		)
+		if course_doc:
+			c_num, l_num = 1, 1
+			lesson_title = ""
+			current_lesson_name = rec.current_lesson
+
+			if current_lesson_name:
+				index_str = get_lesson_index(current_lesson_name)
+				parts = index_str.split("-") if "-" in index_str else index_str.split(".")
+				if len(parts) == 2:
+					try:
+						c_num = int(parts[0])
+						l_num = int(parts[1])
+					except ValueError:
+						c_num, l_num = 1, 1
+				lesson_title = frappe.db.get_value("Course Lesson", current_lesson_name, "title") or ""
+			else:
+				# Find 1st lesson of 1st chapter
+				chapters = frappe.get_all("Chapter Reference", {"parent": rec.course}, ["chapter"], order_by="idx asc", limit=1)
+				if chapters:
+					lessons = frappe.get_all("Lesson Reference", {"parent": chapters[0].chapter}, ["lesson"], order_by="idx asc", limit=1)
+					if lessons:
+						current_lesson_name = lessons[0].lesson
+						lesson_title = frappe.db.get_value("Course Lesson", current_lesson_name, "title") or ""
+
+			continue_learning = {
+				"course_name": course_doc.name,
+				"course_title": course_doc.title,
+				"course_image": course_doc.image,
+				"card_gradient": course_doc.card_gradient,
+				"short_introduction": course_doc.short_introduction,
+				"progress": flt(rec.progress or 0, 1),
+				"chapter_number": c_num,
+				"lesson_number": l_num,
+				"lesson_title": lesson_title,
+				"lesson_name": current_lesson_name,
+			}
+
+	# 3. Pending Quizzes & Assignments
+	enrolled_courses = frappe.get_all("LMS Enrollment", {"member": user}, pluck="course")
+	pending_quizzes = []
+	pending_assignments = []
+
+	if enrolled_courses:
+		quizzes = frappe.get_all(
+			"LMS Quiz",
+			filters={"course": ["in", enrolled_courses]},
+			fields=["name", "title", "course", "passing_percentage", "creation"],
+			order_by="creation desc",
+			limit=10,
+		)
+		for q in quizzes:
+			sub = frappe.get_all(
+				"LMS Quiz Submission",
+				filters={"quiz": q.name, "member": user},
+				fields=["name", "percentage"],
+				limit=1,
+			)
+			if not sub:
+				course_title = frappe.db.get_value("LMS Course", q.course, "title")
+				pending_quizzes.append({
+					"name": q.name,
+					"title": q.title,
+					"course": q.course,
+					"course_title": course_title,
+					"passing_percentage": q.passing_percentage,
+					"status": "Pending",
+				})
+
+		assignments = frappe.get_all(
+			"LMS Assignment",
+			filters={"course": ["in", enrolled_courses]},
+			fields=["name", "title", "course", "type", "creation"],
+			order_by="creation desc",
+			limit=10,
+		)
+		for a in assignments:
+			sub = frappe.get_all(
+				"LMS Assignment Submission",
+				filters={"assignment": a.name, "member": user},
+				fields=["name", "status"],
+				limit=1,
+			)
+			if not sub or sub[0].status not in ("Verified", "Pass"):
+				course_title = frappe.db.get_value("LMS Course", a.course, "title")
+				pending_assignments.append({
+					"name": a.name,
+					"title": a.title,
+					"course": a.course,
+					"course_title": course_title,
+					"type": a.type,
+					"submission_name": sub[0].name if sub else None,
+					"status": sub[0].status if sub else "Not Submitted",
+				})
+
+	# 4. Certificates
+	certificates = frappe.get_all(
+		"LMS Certificate",
+		{"member": user},
+		["name", "course", "course_title", "batch_name", "batch_title", "issue_date", "template"],
+		order_by="issue_date desc",
+	)
+
+	return {
+		"stats": {
+			"enrolled_courses": enrolled_courses_count,
+			"enrolled_batches": enrolled_batches_count,
+			"completed_lessons": completed_lessons_count,
+			"certificates": certificates_count,
+			"current_streak": current_streak,
+			"longest_streak": longest_streak,
+		},
+		"continue_learning": continue_learning,
+		"pending_quizzes": pending_quizzes[:5],
+		"pending_assignments": pending_assignments[:5],
+		"certificates": certificates,
 	}
 
 
