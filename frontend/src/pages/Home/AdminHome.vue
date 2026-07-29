@@ -1,5 +1,69 @@
 <template>
 	<div>
+		<!-- Action Shortcuts -->
+		<div class="flex flex-wrap gap-3 mt-5 mb-8">
+			<router-link :to="{ name: 'Courses', query: { newCourse: '1' } }">
+				<Button size="md" variant="solid">
+					<template #prefix><span class="lucide-plus size-4" /></template>
+					{{ __('Tạo Khóa Học') }}
+				</Button>
+			</router-link>
+			<router-link :to="{ name: 'Batches', query: { newBatch: '1' } }">
+				<Button size="md">
+					<template #prefix><span class="lucide-plus size-4" /></template>
+					{{ __('Tạo Lớp/Batch') }}
+				</Button>
+			</router-link>
+			<router-link :to="{ name: 'Quizzes' }">
+				<Button size="md">
+					<template #prefix><span class="lucide-help-circle size-4" /></template>
+					{{ __('Quản lý Quiz') }}
+				</Button>
+			</router-link>
+			<router-link :to="{ name: 'Assignments' }">
+				<Button size="md">
+					<template #prefix><span class="lucide-file-text size-4" /></template>
+					{{ __('Quản lý Bài tập') }}
+				</Button>
+			</router-link>
+			<router-link :to="{ name: 'AssignmentSubmissionList' }">
+				<Button size="md">
+					<template #prefix><span class="lucide-check-circle size-4" /></template>
+					{{ __('Chấm Bài') }}
+				</Button>
+			</router-link>
+			<router-link :to="{ name: 'Statistics' }">
+				<Button size="md">
+					<template #prefix><span class="lucide-bar-chart-2 size-4" /></template>
+					{{ __('Thống kê Học viên') }}
+				</Button>
+			</router-link>
+		</div>
+
+		<!-- Dashboard Stats -->
+		<div v-if="instructorStats.data" class="grid grid-cols-2 md:grid-cols-5 gap-5 mb-10">
+			<div class="border rounded-md p-4 flex flex-col justify-between hover:border-outline-gray-3 bg-surface-white shadow-sm">
+				<div class="text-ink-gray-5 text-sm font-medium mb-1">{{ __('Total Learners') }}</div>
+				<div class="text-2xl font-semibold text-ink-gray-9">{{ instructorStats.data.total_students }}</div>
+			</div>
+			<div class="border rounded-md p-4 flex flex-col justify-between hover:border-outline-gray-3 bg-surface-white shadow-sm">
+				<div class="text-ink-gray-5 text-sm font-medium mb-1">{{ __('Avg Completion') }}</div>
+				<div class="text-2xl font-semibold text-ink-gray-9">{{ instructorStats.data.average_progress }}%</div>
+			</div>
+			<div class="border rounded-md p-4 flex flex-col justify-between hover:border-outline-gray-3 bg-surface-white shadow-sm">
+				<div class="text-ink-gray-5 text-sm font-medium mb-1">{{ __('Slow Progress') }}</div>
+				<div class="text-2xl font-semibold text-ink-gray-9 text-ink-red-6">{{ instructorStats.data.slow_learners }}</div>
+			</div>
+			<div class="border rounded-md p-4 flex flex-col justify-between hover:border-outline-gray-3 bg-surface-white shadow-sm">
+				<div class="text-ink-gray-5 text-sm font-medium mb-1">{{ __('Pending Reviews') }}</div>
+				<div class="text-2xl font-semibold text-ink-gray-9">{{ instructorStats.data.pending_assignments }}</div>
+			</div>
+			<div class="border rounded-md p-4 flex flex-col justify-between hover:border-outline-gray-3 bg-surface-white shadow-sm">
+				<div class="text-ink-gray-5 text-sm font-medium mb-1">{{ __('Quiz Average') }}</div>
+				<div class="text-2xl font-semibold text-ink-gray-9">{{ instructorStats.data.quiz_average }}%</div>
+			</div>
+		</div>
+
 		<div class="mt-10 space-y-10">
 			<div v-if="evals?.data?.length">
 				<div class="text-lg-semibold text-ink-gray-9 mb-3">
@@ -210,6 +274,11 @@ const props = defineProps<{
 	liveClasses?: { data?: any[] }
 	evals?: { data?: any[] }
 }>()
+
+const instructorStats = createResource({
+	url: 'lms.lms.api.get_instructor_dashboard_stats',
+	auto: true,
+})
 
 const createdCourses = createResource({
 	url: 'lms.lms.api.get_created_courses',
