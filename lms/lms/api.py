@@ -2826,3 +2826,91 @@ def get_instructor_dashboard_stats():
 		"slow_learners": slow_learners,
 		"quiz_average": flt(quiz_average, 2)
 	}
+
+@frappe.whitelist()
+def get_unit_manager_dashboard(course: str | None = None, program: str | None = None, date: str | None = None, status: str | None = None):
+	user = frappe.session.user
+	
+	direct_reports = frappe.get_all("User", {"lms_manager": user}, pluck="name")
+	managed_depts = frappe.get_all("LMS Department", {"manager": user}, pluck="name")
+	dept_users = frappe.get_all("User", {"lms_department": ["in", managed_depts]}, pluck="name") if managed_depts else []
+		
+	managed_users = list(set(direct_reports + dept_users))
+	
+	roles = frappe.get_roles()
+	if not managed_users and ("Moderator" in roles or "System Manager" in roles):
+		managed_users = frappe.get_all("User", {"name": ["not in", ["Administrator", "Guest"]]}, pluck="name")
+		
+	if not managed_users:
+		return {
+			"total_users": 0,
+			"completion_rate": 0,
+			"incomplete_users": [],
+			"overdue_users": [],
+			"average_score": 0,
+			"certificates_issued": 0
+		}
+	
+	filters = {"member": ["in", managed_users]}
+	if course:
+		filters["course"] = course
+	
+	enrollments = frappe.get_all("LMS Enrollment", filters=filters, fields=["member", "course", "progress"])
+	
+	total_enrollments = len(enrollments)
+	completed_enrollments = len([e for e in enrollments if e.progress == 100])
+	completion_rate = (completed_enrollments / total_enrollments * 100) if total_enrollments > 0 else 0
+	
+	incomplete_users = []
+	for e in enrollments:
+		if e.progress < 100:
+			user_doc = frappe.get_cached_value("User", e.member, ["full_name", "employee_code", "lms_department"], as_dict=True)
+			incomplete_users.append({
+				"member": e.member,
+				"full_name": user_doc.full_name if user_doc else e.member,
+				"employee_code": user_doc.employee_code if user_doc else "",
+				"course": e.course,
+				"course_title": frappe.get_cached_value("LMS Course", e.course, "title") or e.course,
+				"progress": e.progress,
+				"department": user_doc.lms_department if user_doc else ""
+			})
+			
+	overdue_users = []
+	batch_enrollments = frappe.get_all("LMS Batch Enrollment", {"member": ["in", managed_users]}, ["member", "batch"])
+	for be in batch_enrollments:
+		batch_end = frappe.get_cached_value("LMS Batch", be.batch, "end_date")
+		if batch_end and getdate(batch_end) < getdate():
+			batch_courses = frappe.get_all("LMS Batch Course", {"parent": be.batch}, pluck="course")
+			for c in batch_courses:
+				if course and c != course:
+					continue
+				prog = frappe.db.get_value("LMS Enrollment", {"member": be.member, "course": c}, "progress") or 0
+				if prog < 100:
+					user_doc = frappe.get_cached_value("User", be.member, ["full_name", "employee_code", "lms_department"], as_dict=True)
+					overdue_users.append({
+						"member": be.member,
+						"full_name": user_doc.full_name if user_doc else be.member,
+						"employee_code": user_doc.employee_code if user_doc else "",
+						"batch": be.batch,
+						"course": c,
+						"course_title": frappe.get_cached_value("LMS Course", c, "title") or c,
+						"progress": prog,
+						"department": user_doc.lms_department if user_doc else ""
+					})
+
+	quizzes = frappe.get_all("LMS Quiz Submission", {"member": ["in", managed_users]}, pluck="percentage")
+	average_score = (sum(quizzes) / len(quizzes)) if quizzes else 0
+	
+	cert_filters = {"member": ["in", managed_users]}
+	if course:
+		cert_filters["course"] = course
+	certificates_issued = frappe.db.count("LMS Certificate", cert_filters)
+		
+	return {
+		"total_users": len(managed_users),
+		"completion_rate": flt(completion_rate, 2),
+		"incomplete_users": incomplete_users,
+		"overdue_users": overdue_users,
+		"average_score": flt(average_score, 2),
+		"certificates_issued": certificates_issued
+	}
