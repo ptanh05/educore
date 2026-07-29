@@ -482,6 +482,15 @@ const getSidebarItems = (forMobile = false) => {
 					},
 				},
 				{
+					label: 'Unit Dashboard',
+					icon: 'Briefcase',
+					to: 'UnitDashboard',
+					activeFor: ['UnitDashboard'],
+					condition: () => {
+						return userResource?.data?.is_moderator || userResource?.data?.is_instructor
+					},
+				},
+				{
 					label: 'Search',
 					icon: 'Search',
 					action: 'commandPalette',

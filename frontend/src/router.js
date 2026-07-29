@@ -30,6 +30,11 @@ const routes = [
 		component: () => import('@/pages/Home/Home.vue'),
 	},
 	{
+		path: '/unit-dashboard',
+		name: 'UnitDashboard',
+		component: () => import('@/pages/Home/ManagerHome.vue'),
+	},
+	{
 		path: '/courses',
 		name: 'Courses',
 		component: () => import('@/pages/Courses/Courses.vue'),
