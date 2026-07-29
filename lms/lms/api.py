@@ -2765,3 +2765,64 @@ def export_course_as_zip(course_name: str):
 def import_course_from_zip(zip_file_path: str):
 	frappe.only_for(["Moderator", "Course Creator"])
 	return import_course_zip(zip_file_path)
+
+@frappe.whitelist()
+def get_instructor_dashboard_stats():
+	user = frappe.session.user
+
+	CourseInstructor = frappe.qb.DocType("Course Instructor")
+	Course = frappe.qb.DocType("LMS Course")
+	
+	courses = (
+		frappe.qb.from_(CourseInstructor)
+		.join(Course).on(CourseInstructor.parent == Course.name)
+		.select(Course.name)
+		.where(CourseInstructor.instructor == user)
+		.run(pluck=True)
+	)
+
+	if not courses and "Moderator" in frappe.get_roles():
+		courses = frappe.get_all("LMS Course", pluck="name")
+
+	if not courses:
+		return {
+			"total_students": 0,
+			"average_progress": 0,
+			"pending_assignments": 0,
+			"slow_learners": 0,
+			"quiz_average": 0
+		}
+
+	total_students = frappe.db.count("LMS Enrollment", {"course": ["in", courses]})
+
+	progress_list = frappe.get_all("LMS Enrollment", {"course": ["in", courses]}, pluck="progress")
+	average_progress = sum(progress_list) / len(progress_list) if progress_list else 0
+
+	slow_learners = len([p for p in progress_list if p is not None and 0 < p < 30])
+	
+	assignments = frappe.get_all("LMS Assignment", {"course": ["in", courses]}, pluck="name")
+	pending_assignments = 0
+	if assignments:
+		pending_assignments = frappe.db.count(
+			"LMS Assignment Submission", 
+			{"assignment": ["in", assignments], "status": "Pending Evaluation"}
+		)
+
+	quizzes = frappe.get_all("LMS Quiz", {"course": ["in", courses]}, pluck="name")
+	quiz_average = 0
+	if quizzes:
+		quiz_submissions = frappe.get_all(
+			"LMS Quiz Submission",
+			{"quiz": ["in", quizzes]},
+			pluck="percentage"
+		)
+		if quiz_submissions:
+			quiz_average = sum(quiz_submissions) / len(quiz_submissions)
+
+	return {
+		"total_students": total_students,
+		"average_progress": flt(average_progress, 2),
+		"pending_assignments": pending_assignments,
+		"slow_learners": slow_learners,
+		"quiz_average": flt(quiz_average, 2)
+	}
