@@ -81,6 +81,15 @@
 				<Tooltip v-if="course.featured" :text="__('Featured')">
 					<span class="lucide-award size-4 text-ink-amber-6" />
 				</Tooltip>
+
+				<div v-if="course.is_required !== undefined" class="text-xs">
+					<span v-if="course.is_required" class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-semibold">{{ __('Required') }}</span>
+					<span v-else class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-semibold">{{ __('Optional') }}</span>
+				</div>
+				<div v-if="course.deadline_days" class="text-xs text-ink-gray-5 flex items-center" :title="__('Deadline')">
+					<span class="lucide-clock size-3 me-1" />
+					{{ course.deadline_days }} {{ __('days') }}
+				</div>
 			</div>
 
 			<div

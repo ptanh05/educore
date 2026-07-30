@@ -33,6 +33,32 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Progress"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Not Started\nIn Progress\nCompleted\nOverdue"
+  },
+  {
+   "fieldname": "assigned_by",
+   "fieldtype": "Link",
+   "label": "Assigned By",
+   "options": "User"
+  },
+  {
+   "default": "Manual",
+   "fieldname": "assignment_source",
+   "fieldtype": "Select",
+   "label": "Assignment Source",
+   "options": "Manual\nAuto by Department\nAuto by Position"
+  },
+  {
+   "fieldname": "deadline_date",
+   "fieldtype": "Date",
+   "label": "Deadline Date"
   }
  ],
  "grid_page_length": 50,

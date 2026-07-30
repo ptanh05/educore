@@ -25,6 +25,27 @@
    "in_list_view": 1,
    "label": "Course Title",
    "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_required",
+   "fieldtype": "Check",
+   "label": "Is Required"
+  },
+  {
+   "fieldname": "sequence",
+   "fieldtype": "Int",
+   "label": "Sequence"
+  },
+  {
+   "fieldname": "unlock_condition",
+   "fieldtype": "Data",
+   "label": "Unlock Condition (Course Name)"
+  },
+  {
+   "fieldname": "deadline_days",
+   "fieldtype": "Int",
+   "label": "Deadline (Days)"
   }
  ],
  "grid_page_length": 50,
