@@ -40,8 +40,20 @@
 
 						<div v-if="Object.keys(program).includes('progress')" class="mt-5">
 							<ProgressBar :progress="program.progress" />
-							<div class="text-sm text-ink-gray-7 mt-1">
-								{{ Math.ceil(program.progress) }}% {{ __('completed') }}
+							<div class="flex justify-between items-center text-sm text-ink-gray-7 mt-1">
+								<span>{{ Math.ceil(program.progress) }}% {{ __('completed') }}</span>
+								<span v-if="program.status" class="px-2 py-0.5 rounded text-xs font-semibold"
+									:class="{
+										'bg-blue-100 text-blue-700': program.status === 'In Progress',
+										'bg-green-100 text-green-700': program.status === 'Completed',
+										'bg-red-100 text-red-700': program.status === 'Overdue',
+										'bg-gray-100 text-gray-700': program.status === 'Not Started'
+									}">
+									{{ program.status }}
+								</span>
+							</div>
+							<div v-if="program.deadline_days" class="text-xs text-ink-gray-5 mt-1">
+								{{ __('Deadline') }}: {{ program.deadline_days }} {{ __('days') }}
 							</div>
 						</div>
 					</div>

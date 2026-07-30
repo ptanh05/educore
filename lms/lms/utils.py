@@ -2286,12 +2286,12 @@ def get_programs():
 		frappe.throw(_("Please login to view programs."))
 
 	enrolled_programs = frappe.get_all(
-		"LMS Program Member", {"member": frappe.session.user}, ["parent as name", "progress"]
+		"LMS Program Member", {"member": frappe.session.user}, ["parent as name", "progress", "status", "deadline_date"]
 	)
 	for program in enrolled_programs:
 		program.update(
 			frappe.db.get_value(
-				"LMS Program", program.name, ["name", "course_count", "member_count"], as_dict=True
+				"LMS Program", program.name, ["name", "course_count", "member_count", "deadline_days"], as_dict=True
 			)
 		)
 
@@ -2340,13 +2340,15 @@ def get_program_details(program_name: str) -> dict:
 		as_dict=1,
 	)
 	program_courses = frappe.get_all(
-		"LMS Program Course", {"parent": program_name}, ["course"], order_by="idx"
+		"LMS Program Course", {"parent": program_name}, ["course", "is_required", "deadline_days"], order_by="idx"
 	)
 
 	program.courses = []
 	previous_progress = 0
 	for i, course in enumerate(program_courses):
 		details = get_course_details(course.course)
+		details.is_required = course.is_required
+		details.deadline_days = course.deadline_days
 		if i == 0:
 			details.eligible = True
 		elif previous_progress == 100:

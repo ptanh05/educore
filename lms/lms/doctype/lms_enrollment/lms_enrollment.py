@@ -90,21 +90,35 @@ def is_admin():
 
 
 def update_program_progress(member):
-	programs = frappe.get_all("LMS Program Member", {"member": member}, ["parent", "name"])
+	programs = frappe.get_all("LMS Program Member", {"member": member}, ["parent", "name", "status"])
 
 	for program in programs:
 		total_progress = 0
-		courses = frappe.get_all("LMS Program Course", {"parent": program.parent}, pluck="course")
+		courses = frappe.get_all("LMS Program Course", {"parent": program.parent}, ["course", "is_required"])
 		if not courses:
 			continue
+			
+		required_courses = [c for c in courses if c.is_required]
+		if not required_courses:
+			required_courses = courses
 
-		for course in courses:
-			progress = frappe.db.get_value("LMS Enrollment", {"course": course, "member": member}, "progress")
+		for course in required_courses:
+			progress = frappe.db.get_value("LMS Enrollment", {"course": course.course, "member": member}, "progress")
 			progress = progress or 0
 			total_progress += progress
 
-		average_progress = ceil(total_progress / len(courses))
-		frappe.db.set_value("LMS Program Member", program.name, "progress", average_progress)
+		average_progress = ceil(total_progress / len(required_courses))
+		
+		status = program.status
+		if average_progress == 100:
+			status = "Completed"
+		elif average_progress > 0 and status not in ("Completed", "Overdue"):
+			status = "In Progress"
+			
+		frappe.db.set_value("LMS Program Member", program.name, {
+			"progress": average_progress,
+			"status": status
+		})
 
 
 @contextmanager
