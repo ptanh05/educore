@@ -12,7 +12,9 @@
   "section_break_tjwv",
   "problem_statement",
   "section_break_ftkh",
-  "test_cases"
+  "test_cases",
+  "timeout",
+  "memory_limit"
  ],
  "fields": [
   {
@@ -34,7 +36,7 @@
    "fieldname": "language",
    "fieldtype": "Select",
    "label": "Language",
-   "options": "Python\nJavaScript\nRust\nGo",
+   "options": "Python\nJavaScript\nJava\nC++\nGo\nRust",
    "reqd": 1
   },
   {
@@ -54,6 +56,18 @@
    "fieldtype": "Table",
    "label": "Test Cases",
    "options": "LMS Test Case"
+  },
+  {
+   "fieldname": "timeout",
+   "fieldtype": "Int",
+   "label": "Timeout (seconds)",
+   "default": "5"
+  },
+  {
+   "fieldname": "memory_limit",
+   "fieldtype": "Int",
+   "label": "Memory Limit (MB)",
+   "default": "128"
   }
  ],
  "grid_page_length": 50,

@@ -7,7 +7,8 @@
  "field_order": [
   "input",
   "column_break_zkvg",
-  "expected_output"
+  "expected_output",
+  "is_hidden"
  ],
  "fields": [
   {
@@ -26,6 +27,12 @@
    "in_list_view": 1,
    "label": "Expected Output",
    "reqd": 1
+  },
+  {
+   "fieldname": "is_hidden",
+   "fieldtype": "Check",
+   "label": "Hidden Test Case (Blind Test)",
+   "default": "0"
   }
  ],
  "grid_page_length": 50,
