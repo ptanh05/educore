@@ -9,7 +9,28 @@ frappe.query_reports["Course Progress Summary"] = {
 			label: __("Course"),
 			fieldtype: "Link",
 			options: "LMS Course",
-			reqd: 1,
+			reqd: 0,
+		},
+		{
+			fieldname: "department",
+			label: __("Department"),
+			fieldtype: "Data",
+		},
+		{
+			fieldname: "from_date",
+			label: __("From Date"),
+			fieldtype: "Date",
+		},
+		{
+			fieldname: "to_date",
+			label: __("To Date"),
+			fieldtype: "Date",
+		},
+		{
+			fieldname: "batch",
+			label: __("Batch"),
+			fieldtype: "Link",
+			options: "LMS Batch",
 		},
 	],
 };

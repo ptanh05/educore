@@ -8,14 +8,27 @@ from frappe.model.document import Document
 from frappe.utils import cint
 
 
+from lms.lms.utils import PRIVILEGED_ROLES
+
 class LMSQuizSubmission(Document):
 	def validate(self):
+		self.enforce_member_ownership()
 		self.validate_if_max_attempts_exceeded()
 		self.validate_marks()
 		self.set_percentage()
 
 	def on_update(self):
 		self.notify_member()
+
+	def enforce_member_ownership(self):
+		if PRIVILEGED_ROLES & set(frappe.get_roles()):
+			return
+		if self.member and self.member != frappe.session.user:
+			frappe.throw(
+				_("You can only submit quizzes for your own account."),
+				frappe.PermissionError,
+			)
+		self.member = frappe.session.user
 
 	def validate_if_max_attempts_exceeded(self):
 		max_attempts = frappe.db.get_value("LMS Quiz", self.quiz, ["max_attempts"])
