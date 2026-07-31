@@ -22,6 +22,24 @@ class LMSEnrollment(Document):
 
 	def on_update(self):
 		update_program_progress(self.member)
+		if self.progress == 100:
+			self.award_competencies()
+
+	def award_competencies(self):
+		skills = frappe.get_all("LMS Course Skill", filters={"parent": self.course}, fields=["skill", "level_awarded"])
+		for s in skills:
+			exists = frappe.db.get_value("LMS Member Skill", {"member": self.member, "skill": s.skill}, ["name", "achieved_level"], as_dict=True)
+			if not exists:
+				frappe.get_doc({
+					"doctype": "LMS Member Skill",
+					"member": self.member,
+					"skill": s.skill,
+					"achieved_level": s.level_awarded,
+					"source": self.course
+				}).insert(ignore_permissions=True)
+			elif exists.achieved_level < s.level_awarded:
+				frappe.db.set_value("LMS Member Skill", exists.name, "achieved_level", s.level_awarded)
+				frappe.db.set_value("LMS Member Skill", exists.name, "source", self.course)
 
 	def validate_duplicate_enrollment(self):
 		existing_enrollment = frappe.db.exists(

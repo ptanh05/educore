@@ -197,7 +197,7 @@ const quizzes = createListResource({
 		return data.map((quiz) => {
 			return {
 				...quiz,
-				modified: dayjs(quiz.modified).format('DD MMM YYYY'),
+				modified: dayjs(quiz.modified).format('LL'),
 			}
 		})
 	},

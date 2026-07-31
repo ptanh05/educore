@@ -102,7 +102,7 @@
 								v-if="column.key == 'modified'"
 								class="text-sm text-ink-gray-5"
 							>
-								{{ dayjs(row[column.key]).format('MMM D, YYYY') }}
+								{{ dayjs(row[column.key]).format('LL') }}
 							</div>
 							<div v-else>
 								{{ row[column.key] }}

@@ -1,0 +1,38 @@
+{
+ "actions": [],
+ "creation": "2026-07-31 16:20:59.630510",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "skill",
+  "required_level"
+ ],
+ "fields": [
+  {
+   "fieldname": "skill",
+   "fieldtype": "Link",
+   "label": "Skill",
+   "options": "LMS Skill",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "required_level",
+   "fieldtype": "Int",
+   "label": "Required Level",
+   "in_list_view": 1,
+   "reqd": 1,
+   "description": "e.g. 1-5"
+  }
+ ],
+ "istable": 1,
+ "modified": "2026-07-31 16:20:59.630510",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "LMS Skill Requirement",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

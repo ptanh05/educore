@@ -238,7 +238,7 @@ const assignments = createListResource({
 		return data.map((row) => {
 			return {
 				...row,
-				modified: dayjs(row.modified).format('DD MMM YYYY'),
+				modified: dayjs(row.modified).format('LL'),
 			}
 		})
 	},

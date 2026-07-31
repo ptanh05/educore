@@ -1,0 +1,37 @@
+{
+ "actions": [],
+ "creation": "2026-07-31 16:20:59.637009",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "skill",
+  "level_awarded"
+ ],
+ "fields": [
+  {
+   "fieldname": "skill",
+   "fieldtype": "Link",
+   "label": "Skill",
+   "options": "LMS Skill",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "level_awarded",
+   "fieldtype": "Int",
+   "label": "Level Awarded",
+   "in_list_view": 1,
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2026-07-31 16:20:59.637009",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "LMS Course Skill",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
