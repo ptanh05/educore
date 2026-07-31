@@ -8,6 +8,8 @@
   "exercise",
   "exercise_title",
   "status",
+  "score",
+  "error_message",
   "column_break_jkjs",
   "member",
   "member_name",
@@ -45,7 +47,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nPassed\nFailed"
+   "options": "Pending\nPassed\nFailed\nError\nTimeout"
   },
   {
    "fieldname": "column_break_jkjs",
@@ -83,6 +85,18 @@
    "fieldname": "member_image",
    "fieldtype": "Attach",
    "label": "Member Image"
+  },
+  {
+   "fieldname": "score",
+   "fieldtype": "Int",
+   "label": "Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Code",
+   "label": "Compile/Runtime Error",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
