@@ -17,17 +17,39 @@ def execute(filters=None):
 def get_data(filters=None):
 	summary = []
 	query_filter = {}
+	
 	if filters:
-		query_filter = {"course": filters.course}
+		if filters.get("course"):
+			query_filter["course"] = filters.get("course")
+		if filters.get("batch"):
+			query_filter["enrollment_from_batch"] = filters.get("batch")
+		if filters.get("from_date"):
+			query_filter["creation"] = [">=", filters.get("from_date")]
+		if filters.get("to_date"):
+			if "creation" in query_filter:
+				query_filter["creation"] = ["between", (filters.get("from_date"), filters.get("to_date"))]
+			else:
+				query_filter["creation"] = ["<=", filters.get("to_date")]
+
+	if filters and filters.get("department"):
+		try:
+			members = frappe.get_all("User", filters={"department": filters.get("department")}, pluck="name")
+			if members:
+				query_filter["member"] = ["in", members]
+			else:
+				return []
+		except Exception:
+			pass
 
 	memberships = frappe.get_all(
 		"LMS Enrollment",
 		query_filter,
-		["name", "course", "member", "member_name", "progress"],
+		["name", "course", "member", "member_name", "progress", "creation"],
 		order_by="course",
 	)
 
 	for membership in memberships:
+		department = frappe.db.get_value("User", membership.member, "department", ignore=True) or ""
 		summary.append(
 			frappe._dict(
 				{
@@ -35,7 +57,9 @@ def get_data(filters=None):
 					"course_name": frappe.db.get_value("LMS Course", membership.course, "title"),
 					"member": membership.member,
 					"member_name": membership.member_name,
+					"department": department,
 					"progress": cint(membership.progress),
+					"enrollment_date": membership.creation.strftime("%Y-%m-%d") if membership.creation else "",
 				}
 			)
 		)
@@ -72,9 +96,21 @@ def get_columns():
 			"width": 150,
 		},
 		{
+			"fieldname": "department",
+			"fieldtype": "Data",
+			"label": _("Department"),
+			"width": 150,
+		},
+		{
 			"fieldname": "progress",
 			"fieldtype": "Data",
 			"label": _("Progress (%)"),
+			"width": 120,
+		},
+		{
+			"fieldname": "enrollment_date",
+			"fieldtype": "Date",
+			"label": _("Enrollment Date"),
 			"width": 120,
 		},
 	]
