@@ -1,0 +1,53 @@
+{
+ "actions": [],
+ "creation": "2026-07-31 16:20:59.634211",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "position",
+  "skills"
+ ],
+ "fields": [
+  {
+   "fieldname": "position",
+   "fieldtype": "Data",
+   "label": "Position Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "skills",
+   "fieldtype": "Table",
+   "label": "Required Skills",
+   "options": "LMS Skill Requirement"
+  }
+ ],
+ "istable": 0,
+ "modified": "2026-07-31 16:20:59.634211",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "LMS Role Profile",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LMS Student"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "autoname": "field:position"
+}

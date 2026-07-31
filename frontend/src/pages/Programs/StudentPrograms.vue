@@ -49,7 +49,7 @@
 										'bg-red-100 text-red-700': program.status === 'Overdue',
 										'bg-gray-100 text-gray-700': program.status === 'Not Started'
 									}">
-									{{ program.status }}
+									{{ __(program.status) }}
 								</span>
 							</div>
 							<div v-if="program.deadline_days" class="text-xs text-ink-gray-5 mt-1">
@@ -60,7 +60,7 @@
 				</div>
 				<div v-else class="flex-1">
 					<EmptyStateLayout
-						:name="convertToTitleCase(category) + ' Programs'"
+						:name="__(convertToTitleCase(category)) + ' ' + __('Programs')"
 						icon="lucide-graduation-cap"
 					/>
 				</div>

@@ -74,7 +74,7 @@
 									<span class="text-xs-medium text-ink-gray-7 mb-1">
 										{{ __('Issued on') }}:
 									</span>
-									{{ dayjs(badge.issued_on).format('DD MMM YYYY') }}
+									{{ dayjs(badge.issued_on).format('LL') }}
 								</div>
 								<div
 									v-if="user.data?.name == profile.data?.name"
@@ -167,7 +167,7 @@ const shareOnSocial = (badge, medium) => {
 		'I am happy to announce that I earned the {0} badge on {1} at {2}'
 	).format(
 		badge.badge,
-		dayjs(badge.issued_on).format('DD MMM YYYY'),
+		dayjs(badge.issued_on).format('LL'),
 		branding.data?.app_name
 	)
 

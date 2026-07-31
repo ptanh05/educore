@@ -82,7 +82,7 @@
 							<div class="flex items-center mb-3">
 								<span class="lucide-calendar size-4" />
 								<span class="ms-2">
-									{{ dayjs(evaluation.date).format('DD MMMM YYYY') }}
+									{{ dayjs(evaluation.date).format('LL') }}
 								</span>
 							</div>
 							<div class="flex items-center mb-3">
