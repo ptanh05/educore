@@ -1,7 +1,14 @@
-import orjson
+import json
 import glob
-for f in glob.glob('/home/frappe/frappe-bench/apps/lms/lms/lms/doctype/*/*.json'):
+import os
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+pattern = os.path.join(base_dir, "lms", "lms", "doctype", "*", "*.json")
+
+for f in glob.glob(pattern):
     try:
-        orjson.loads(open(f, 'rb').read())
+        with open(f, "r", encoding="utf-8") as file:
+            json.load(file)
     except Exception as e:
         print(f"Error in {f}: {e}")
+
