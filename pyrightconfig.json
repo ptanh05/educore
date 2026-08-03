@@ -6,6 +6,10 @@
     "**/node_modules",
     "**/__pycache__"
   ],
+  "stubPath": "typings",
+  "extraPaths": [
+    "typings"
+  ],
   "reportMissingImports": "none",
   "reportMissingTypeStubs": false
 }

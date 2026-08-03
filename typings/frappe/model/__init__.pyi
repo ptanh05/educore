@@ -1,0 +1,1 @@
+# Frappe model package stub

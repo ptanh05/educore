@@ -1,6 +1,14 @@
 {
+  "python.analysis.typeCheckingMode": "off",
   "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingImports": "none",
     "reportMissingModuleSource": "none"
-  }
+  },
+  "python.analysis.stubPath": "typings",
+  "python.autoComplete.extraPaths": [
+    "./typings"
+  ],
+  "python.analysis.extraPaths": [
+    "./typings"
+  ]
 }
