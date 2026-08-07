@@ -8,7 +8,11 @@
  "field_order": [
   "member",
   "full_name",
-  "progress"
+  "progress",
+  "status",
+  "assigned_by",
+  "assignment_source",
+  "deadline_date"
  ],
  "fields": [
   {

@@ -8,11 +8,15 @@ import requests
 
 class LMSProgrammingExerciseSubmission(Document):
 	def before_insert(self):
+		if not self.member:
+			self.member = frappe.session.user
+		self.owner = self.member
+		self.set("test_cases", [])
 		self.evaluate_submission()
 
 	def evaluate_submission(self):
 		exercise = frappe.get_doc("LMS Programming Exercise", self.exercise)
-		test_cases = exercise.get("test_cases")
+		test_cases = exercise.get("test_cases") or []
 		
 		# Define API details for Piston (a public/private code execution API)
 		# Note: In a real enterprise system, a private self-hosted Piston or Judge0 instance is used.

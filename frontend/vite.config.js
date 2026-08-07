@@ -81,6 +81,17 @@ export default defineConfig(async ({ mode }) => {
 				'frappe-ui',
 			],
 		},
+		build: {
+			chunkSizeWarningLimit: 1000,
+			rollupOptions: {
+				output: {
+					manualChunks: {
+						'vendor-vue': ['vue', 'vue-router', 'pinia'],
+						'vendor-editor': ['@editorjs/editorjs'],
+					},
+				},
+			},
+		},
 		optimizeDeps: {
 			include: [
 				'feather-icons',
