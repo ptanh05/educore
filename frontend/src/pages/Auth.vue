@@ -113,8 +113,9 @@
 						</div>
 
 						<div class="mt-6">
-							<a
-								href="/api/method/frappe.integrations.oauth2_logins.login_via_google"
+							<button
+								@click.prevent="loginWithGoogle"
+								:disabled="googleLoggingIn"
 								class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
 							>
 								<svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,7 +125,7 @@
 									<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
 								</svg>
 								{{ __('Google') }}
-							</a>
+							</button>
 						</div>
 					</div>
 
@@ -250,6 +251,19 @@ const adminLogin = async () => {
 		toast.error(error.message || 'Invalid API Key')
 	} finally {
 		adminLoggingIn.value = false
+	}
+}
+
+const googleLoggingIn = ref(false)
+const loginWithGoogle = async () => {
+	googleLoggingIn.value = true
+	try {
+		const url = await call('lms.lms.auth.get_google_login_url')
+		window.location.href = url
+	} catch (error) {
+		toast.error(error.message || 'Google Login is not configured.')
+	} finally {
+		googleLoggingIn.value = false
 	}
 }
 </script>

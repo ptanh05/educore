@@ -54,3 +54,13 @@ def sign_up(email, full_name, password):
     login_manager.login_as(user.name)
     
     return {"message": "Account created successfully"}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_google_login_url():
+    try:
+        from frappe.utils.oauth import get_oauth2_authorize_url
+        url = get_oauth2_authorize_url("Google", "/lms/courses")
+        return url
+    except Exception:
+        frappe.throw("Google Login is not properly configured on the server.")
