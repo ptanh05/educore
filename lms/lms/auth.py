@@ -59,8 +59,12 @@ def sign_up(email: str, full_name: str, password: str) -> dict:
 @frappe.whitelist(allow_guest=True)
 def get_google_login_url() -> str:
     try:
+        provider_name = frappe.db.get_value("Social Login Key", {"provider_name": "Google", "enable_social_login": 1}, "name")
+        if not provider_name:
+            provider_name = "Google" # fallback
+            
         from frappe.utils.oauth import get_oauth2_authorize_url
-        url = get_oauth2_authorize_url("Google", "/lms/courses")
+        url = get_oauth2_authorize_url(provider_name, "/lms/courses")
         return url
-    except Exception:
-        frappe.throw("Google Login is not properly configured on the server.")
+    except Exception as e:
+        frappe.throw(f"Google Login error: {str(e)}")
