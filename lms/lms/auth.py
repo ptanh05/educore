@@ -3,7 +3,7 @@ from frappe.auth import LoginManager
 import os
 
 @frappe.whitelist(allow_guest=True)
-def admin_login(api_key):
+def admin_login(api_key: str) -> dict:
     valid_key = frappe.conf.get("admin_api_key")
     
     if not valid_key:
@@ -19,7 +19,7 @@ def admin_login(api_key):
 
 
 @frappe.whitelist(allow_guest=True)
-def sign_up(email, full_name, password):
+def sign_up(email: str, full_name: str, password: str) -> dict:
     if not email or not full_name or not password:
         frappe.throw("Email, Full Name, and Password are required.")
         
@@ -57,7 +57,7 @@ def sign_up(email, full_name, password):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_google_login_url():
+def get_google_login_url() -> str:
     try:
         from frappe.utils.oauth import get_oauth2_authorize_url
         url = get_oauth2_authorize_url("Google", "/lms/courses")
