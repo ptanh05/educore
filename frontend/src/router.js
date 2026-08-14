@@ -30,9 +30,9 @@ const routes = [
 		component: () => import('@/pages/Home/Home.vue'),
 	},
 	{
-		path: '/login',
-		name: 'Login',
-		component: () => import('@/pages/Login.vue'),
+		path: '/auth',
+		name: 'Auth',
+		component: () => import('@/pages/Auth.vue'),
 	},
 	{
 		path: '/unit-dashboard',
@@ -279,12 +279,12 @@ router.beforeEach(async (to, from, next) => {
 		isLoggedIn = false
 	}
 
-	if (!isLoggedIn && to.name !== 'Login') {
+	if (!isLoggedIn && to.name !== 'Auth') {
 		if (to.name == 'Home') return next({ name: 'Courses' })
 
 		await settings.promise
 		if (!settings.data.allow_guest_access) {
-			return next({ name: 'Login' })
+			return next({ name: 'Auth' })
 		}
 	}
 

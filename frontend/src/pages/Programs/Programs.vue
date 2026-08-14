@@ -114,7 +114,7 @@ const filters = ref({})
 
 onMounted(() => {
 	if (!user.data) {
-		window.location.href = '/login'
+		window.location.href = '/lms/auth'
 	}
 	if (user.data?.is_moderator || user.data?.is_instructor) {
 		setFiltersFromQuery()

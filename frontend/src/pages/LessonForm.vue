@@ -184,7 +184,7 @@ defineExpose({
 
 onMounted(() => {
 	if (!user.data?.is_moderator && !user.data?.is_instructor) {
-		window.location.href = '/login'
+		window.location.href = '/lms/auth'
 	}
 	capture('lesson_form_opened')
 	enablePlyr()
