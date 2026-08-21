@@ -123,12 +123,8 @@ def create_user_document(email, first_name, last_name, full_name, user_image=Non
 
 def create_user(email, first_name=None, last_name=None, full_name=None, user_image=None, roles=None):
 	validate_email_address(email, True)
-	print(email)
-	print(frappe.db.exists("User", email))
 	existing_user = frappe.db.exists("User", email)
-	print("existing_user", existing_user)
 	if existing_user:
-		print("User already exists")
 		return frappe.get_doc("User", email)
 
 	first_name, last_name, full_name = process_user_names(first_name, last_name, full_name)

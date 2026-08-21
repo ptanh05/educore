@@ -35,6 +35,11 @@ const routes = [
 		component: () => import('@/pages/Auth.vue'),
 	},
 	{
+		path: '/admin-login',
+		name: 'AdminLogin',
+		component: () => import('@/pages/AdminLogin.vue'),
+	},
+	{
 		path: '/unit-dashboard',
 		name: 'UnitDashboard',
 		component: () => import('@/pages/Home/ManagerHome.vue'),
@@ -279,7 +284,7 @@ router.beforeEach(async (to, from, next) => {
 		isLoggedIn = false
 	}
 
-	if (!isLoggedIn && to.name !== 'Auth') {
+	if (!isLoggedIn && to.name !== 'Auth' && to.name !== 'AdminLogin') {
 		if (to.name == 'Home') return next({ name: 'Courses' })
 
 		await settings.promise

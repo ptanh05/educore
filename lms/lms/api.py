@@ -2829,6 +2829,7 @@ def get_instructor_dashboard_stats():
 
 @frappe.whitelist()
 def get_unit_manager_dashboard(course: str | None = None, program: str | None = None, date: str | None = None, status: str | None = None):
+	frappe.only_for(["Moderator", "System Manager", "Course Creator"])
 	user = frappe.session.user
 	
 	direct_reports = frappe.get_all("User", {"lms_manager": user}, pluck="name")
