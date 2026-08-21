@@ -129,6 +129,16 @@ doc_events = {
 		"validate": "lms.lms.user.validate_username_duplicates",
 		"before_insert": "lms.lms.user.add_lms_student_role",
 	},
+	"LMS Enrollment": {
+		"after_insert": "lms.lms.audit.on_enrollment_change",
+		"on_update": "lms.lms.audit.on_enrollment_change",
+	},
+	"LMS Batch Enrollment": {
+		"after_insert": "lms.lms.audit.on_batch_enrollment_change",
+	},
+	"LMS Certificate": {
+		"after_insert": "lms.lms.audit.on_certificate_issued",
+	},
 }
 
 # Scheduled Tasks

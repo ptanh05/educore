@@ -2831,17 +2831,17 @@ def get_instructor_dashboard_stats():
 def get_unit_manager_dashboard(course: str | None = None, program: str | None = None, date: str | None = None, status: str | None = None):
 	frappe.only_for(["Moderator", "System Manager", "Course Creator"])
 	user = frappe.session.user
-	
+
 	direct_reports = frappe.get_all("User", {"lms_manager": user}, pluck="name")
 	managed_depts = frappe.get_all("LMS Department", {"manager": user}, pluck="name")
 	dept_users = frappe.get_all("User", {"lms_department": ["in", managed_depts]}, pluck="name") if managed_depts else []
-		
+
 	managed_users = list(set(direct_reports + dept_users))
-	
+
 	roles = frappe.get_roles()
 	if not managed_users and ("Moderator" in roles or "System Manager" in roles):
 		managed_users = frappe.get_all("User", {"name": ["not in", ["Administrator", "Guest"]]}, pluck="name")
-		
+
 	if not managed_users:
 		return {
 			"total_users": 0,
@@ -2851,62 +2851,145 @@ def get_unit_manager_dashboard(course: str | None = None, program: str | None = 
 			"average_score": 0,
 			"certificates_issued": 0
 		}
-	
-	filters = {"member": ["in", managed_users]}
+
+	# --- Batch-fetch all user details upfront (1 query) ---
+	user_docs = frappe.get_all(
+		"User",
+		filters={"name": ["in", managed_users]},
+		fields=["name", "full_name", "employee_code", "lms_department"],
+	)
+	user_map = {u.name: u for u in user_docs}
+
+	# --- Batch-fetch enrollments (1 query) ---
+	enrollment_filters = {"member": ["in", managed_users]}
 	if course:
-		filters["course"] = course
-	
-	enrollments = frappe.get_all("LMS Enrollment", filters=filters, fields=["member", "course", "progress"])
-	
+		enrollment_filters["course"] = course
+	enrollments = frappe.get_all(
+		"LMS Enrollment",
+		filters=enrollment_filters,
+		fields=["member", "course", "progress"],
+	)
+
+	# --- Batch-fetch course titles for all referenced courses (1 query) ---
+	course_names = list({e.course for e in enrollments})
+	if course_names:
+		course_docs = frappe.get_all(
+			"LMS Course",
+			filters={"name": ["in", course_names]},
+			fields=["name", "title"],
+		)
+		course_title_map = {c.name: c.title for c in course_docs}
+	else:
+		course_title_map = {}
+
+	# --- Compute completion stats ---
 	total_enrollments = len(enrollments)
-	completed_enrollments = len([e for e in enrollments if e.progress == 100])
+	completed_enrollments = sum(1 for e in enrollments if e.progress == 100)
 	completion_rate = (completed_enrollments / total_enrollments * 100) if total_enrollments > 0 else 0
-	
+
+	# --- Build incomplete users list (no extra queries) ---
 	incomplete_users = []
 	for e in enrollments:
 		if e.progress < 100:
-			user_doc = frappe.get_cached_value("User", e.member, ["full_name", "employee_code", "lms_department"], as_dict=True)
+			u = user_map.get(e.member, {})
 			incomplete_users.append({
 				"member": e.member,
-				"full_name": user_doc.full_name if user_doc else e.member,
-				"employee_code": user_doc.employee_code if user_doc else "",
+				"full_name": u.get("full_name") or e.member,
+				"employee_code": u.get("employee_code") or "",
 				"course": e.course,
-				"course_title": frappe.get_cached_value("LMS Course", e.course, "title") or e.course,
+				"course_title": course_title_map.get(e.course) or e.course,
 				"progress": e.progress,
-				"department": user_doc.lms_department if user_doc else ""
+				"department": u.get("lms_department") or "",
 			})
-			
-	overdue_users = []
-	batch_enrollments = frappe.get_all("LMS Batch Enrollment", {"member": ["in", managed_users]}, ["member", "batch"])
-	for be in batch_enrollments:
-		batch_end = frappe.get_cached_value("LMS Batch", be.batch, "end_date")
-		if batch_end and getdate(batch_end) < getdate():
-			batch_courses = frappe.get_all("LMS Batch Course", {"parent": be.batch}, pluck="course")
-			for c in batch_courses:
-				if course and c != course:
-					continue
-				prog = frappe.db.get_value("LMS Enrollment", {"member": be.member, "course": c}, "progress") or 0
-				if prog < 100:
-					user_doc = frappe.get_cached_value("User", be.member, ["full_name", "employee_code", "lms_department"], as_dict=True)
-					overdue_users.append({
-						"member": be.member,
-						"full_name": user_doc.full_name if user_doc else be.member,
-						"employee_code": user_doc.employee_code if user_doc else "",
-						"batch": be.batch,
-						"course": c,
-						"course_title": frappe.get_cached_value("LMS Course", c, "title") or c,
-						"progress": prog,
-						"department": user_doc.lms_department if user_doc else ""
-					})
 
+	# --- Overdue users: batch-fetch batches + courses (3 queries instead of N*M) ---
+	overdue_users = []
+	batch_enrollments = frappe.get_all(
+		"LMS Batch Enrollment",
+		{"member": ["in", managed_users]},
+		["member", "batch"],
+	)
+	if batch_enrollments:
+		batch_names = list({be.batch for be in batch_enrollments})
+		# Fetch all batch end dates in one query
+		batch_docs = frappe.get_all(
+			"LMS Batch",
+			filters={"name": ["in", batch_names]},
+			fields=["name", "end_date"],
+		)
+		batch_end_map = {b.name: b.end_date for b in batch_docs}
+
+		# Find expired batches
+		expired_batches = [b for b, end in batch_end_map.items() if end and getdate(end) < getdate()]
+		if expired_batches:
+			# Fetch all batch-course mappings for expired batches (1 query)
+			batch_courses = frappe.get_all(
+				"Batch Course",
+				filters={"parent": ["in", expired_batches]},
+				fields=["parent as batch", "course"],
+			)
+
+			# Build a lookup: batch → [courses]
+			from collections import defaultdict
+			batch_course_map = defaultdict(list)
+			for bc in batch_courses:
+				batch_course_map[bc.batch].append(bc.course)
+
+			# Ensure overdue course titles are in the map
+			overdue_course_names = list({bc.course for bc in batch_courses})
+			if overdue_course_names:
+				extra_courses = frappe.get_all(
+					"LMS Course",
+					filters={"name": ["in", overdue_course_names]},
+					fields=["name", "title"],
+				)
+				for c in extra_courses:
+					course_title_map.setdefault(c.name, c.title)
+
+			# Build enrollment progress lookup: (member, course) → progress
+			enrollment_progress = {(e.member, e.course): e.progress for e in enrollments}
+
+			# Check additional enrollments not yet fetched (if course filter was applied)
+			if course:
+				extra_members = list({be.member for be in batch_enrollments if be.batch in expired_batches})
+				extra_enrollments = frappe.get_all(
+					"LMS Enrollment",
+					filters={"member": ["in", extra_members]},
+					fields=["member", "course", "progress"],
+				)
+				for ee in extra_enrollments:
+					enrollment_progress.setdefault((ee.member, ee.course), ee.progress)
+
+			for be in batch_enrollments:
+				if be.batch not in expired_batches:
+					continue
+				for c in batch_course_map.get(be.batch, []):
+					if course and c != course:
+						continue
+					prog = enrollment_progress.get((be.member, c), 0) or 0
+					if prog < 100:
+						u = user_map.get(be.member, {})
+						overdue_users.append({
+							"member": be.member,
+							"full_name": u.get("full_name") or be.member,
+							"employee_code": u.get("employee_code") or "",
+							"batch": be.batch,
+							"course": c,
+							"course_title": course_title_map.get(c) or c,
+							"progress": prog,
+							"department": u.get("lms_department") or "",
+						})
+
+	# --- Quiz average (1 query) ---
 	quizzes = frappe.get_all("LMS Quiz Submission", {"member": ["in", managed_users]}, pluck="percentage")
 	average_score = (sum(quizzes) / len(quizzes)) if quizzes else 0
-	
+
+	# --- Certificate count (1 query) ---
 	cert_filters = {"member": ["in", managed_users]}
 	if course:
 		cert_filters["course"] = course
 	certificates_issued = frappe.db.count("LMS Certificate", cert_filters)
-		
+
 	return {
 		"total_users": len(managed_users),
 		"completion_rate": flt(completion_rate, 2),
@@ -2915,3 +2998,4 @@ def get_unit_manager_dashboard(course: str | None = None, program: str | None = 
 		"average_score": flt(average_score, 2),
 		"certificates_issued": certificates_issued
 	}
+

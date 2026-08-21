@@ -277,11 +277,11 @@ def get_courses(filters: dict = None, start: int = 0):
 5. ❌ **Thêm `frappe.only_for()`** vào `get_unit_manager_dashboard()`
 
 ### Phase 2 — Enterprise Features (3-5 ngày)
-6. Thêm **"Quên mật khẩu"** vào Auth.vue
-7. Thêm **email verification** trước khi active account
-8. **Optimize N+1 queries** trong dashboard API — dùng batch query
-9. Thiết kế lại **Auth.vue** — thêm branding, animation, localization VN
-10. Thêm **audit trail** — login events, enrollment changes
+6. ✅ Thêm **"Quên mật khẩu"** vào Auth.vue
+7. ✅ Thêm **email verification** trước khi active account
+8. ✅ **Optimize N+1 queries** trong dashboard API — dùng batch query
+9. ✅ Thiết kế lại **Auth.vue** — thêm branding, animation, localization VN
+10. ✅ Thêm **audit trail** — login events, enrollment changes
 
 ### Phase 3 — Polish (1 tuần)
 11. Export báo cáo **Excel (XLSX)** + **PDF**
