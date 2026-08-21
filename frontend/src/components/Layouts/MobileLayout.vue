@@ -211,7 +211,7 @@ const handleClick = (tab) => {
 	if (tab.label == 'Notifications') {
 		toggleNotifications()
 		toggleMenu()
-	} else if (tab.label == 'Log in') window.location.href = '/login'
+	} else if (tab.label == 'Log in') window.location.href = '/lms/auth'
 	else if (tab.label == 'Log out')
 		logout.submit().then(() => {
 			isLoggedIn = false

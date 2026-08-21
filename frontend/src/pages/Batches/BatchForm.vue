@@ -450,7 +450,7 @@ const autoSave = useDebounceFn((): void => {
 }, 1000)
 
 onMounted(() => {
-	if (!user.data) window.location.href = '/login'
+	if (!user.data) window.location.href = '/lms/auth'
 })
 
 useKeyboardShortcuts({ shortcuts: [saveShortcut(() => submitBatch())] })

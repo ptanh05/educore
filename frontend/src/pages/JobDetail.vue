@@ -215,7 +215,7 @@ const openApplicationModal = () => {
 }
 
 const redirectToLogin = (job) => {
-	window.location.href = `/login?redirect-to=/job-openings/${job}`
+	window.location.href = `/lms/auth?redirect-to=/job-openings/${job}`
 }
 
 const redirectToWebsite = (url) => {

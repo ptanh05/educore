@@ -217,7 +217,7 @@ const userDropdownOptions = computed(() => {
 					icon: 'lucide-log-in',
 					label: 'Log in',
 					onClick: () => {
-						window.location.href = '/login'
+						window.location.href = '/lms/auth'
 					},
 					condition: () => {
 						return !isLoggedIn
