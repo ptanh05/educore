@@ -6,6 +6,7 @@ import { createPinia } from 'pinia'
 import dayjs from '@/utils/dayjs'
 import { createDialog } from '@/utils/dialogs'
 import translationPlugin from './translation'
+import i18n from './i18n'
 import { usersStore } from './stores/user'
 import { initSocket } from './socket'
 import { FrappeUI, setConfig, frappeRequest, pageMetaPlugin } from 'frappe-ui'
@@ -19,6 +20,7 @@ app.use(FrappeUI)
 app.use(pinia)
 app.use(router)
 app.use(translationPlugin)
+app.use(i18n)
 app.use(pageMetaPlugin)
 app.provide('$dayjs', dayjs)
 app.provide('$socket', initSocket())

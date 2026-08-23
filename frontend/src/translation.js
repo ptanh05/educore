@@ -1,4 +1,5 @@
 import { createResource } from 'frappe-ui'
+import i18n from './i18n'
 
 export default function translationPlugin(app) {
 	app.config.globalProperties.__ = translate
@@ -8,7 +9,12 @@ export default function translationPlugin(app) {
 
 function translate(message) {
 	let translatedMessages = window.translatedMessages || {}
-	let translatedMessage = translatedMessages[message] || message
+	let translatedMessage = message
+	if (i18n.global.te(message)) {
+		translatedMessage = i18n.global.t(message)
+	} else if (translatedMessages[message]) {
+		translatedMessage = translatedMessages[message]
+	}
 
 	const hasPlaceholders = /{\d+}/.test(message)
 	if (!hasPlaceholders) {

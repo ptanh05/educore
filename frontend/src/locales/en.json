@@ -1,0 +1,20 @@
+{
+  "language": "Language",
+  "english": "English",
+  "vietnamese": "Vietnamese",
+  "My Profile": "My Profile",
+  "Toggle Theme": "Toggle Theme",
+  "Settings": "Settings",
+  "Clear Demo Data": "Clear Demo Data",
+  "Login to Frappe Cloud": "Login to Frappe Cloud",
+  "Log out": "Log out",
+  "Log in": "Log in",
+  "Switch Language": "Switch Language",
+  "Confirm": "Confirm",
+  "Login to Frappe Cloud?": "Login to Frappe Cloud?",
+  "Are you sure you want to login to your Frappe Cloud dashboard?": "Are you sure you want to login to your Frappe Cloud dashboard?",
+  "Confirm clearing demo data?": "Confirm clearing demo data?",
+  "Are you sure you want to clear the demo data? This would delete the course \"A guide  to Frappe Learning\" along with all its associated data. This action cannot be undone.": "Are you sure you want to clear the demo data? This would delete the course \"A guide  to Frappe Learning\" along with all its associated data. This action cannot be undone.",
+  "Demo data cleared successfully": "Demo data cleared successfully",
+  "Error clearing demo data": "Error clearing demo data"
+}

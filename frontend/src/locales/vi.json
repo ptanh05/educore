@@ -1,0 +1,20 @@
+{
+  "language": "Ngôn ngữ",
+  "english": "Tiếng Anh",
+  "vietnamese": "Tiếng Việt",
+  "My Profile": "Hồ sơ của tôi",
+  "Toggle Theme": "Đổi giao diện",
+  "Settings": "Cài đặt",
+  "Clear Demo Data": "Xóa Dữ liệu Mẫu",
+  "Login to Frappe Cloud": "Đăng nhập Frappe Cloud",
+  "Log out": "Đăng xuất",
+  "Log in": "Đăng nhập",
+  "Switch Language": "Đổi Ngôn ngữ",
+  "Confirm": "Xác nhận",
+  "Login to Frappe Cloud?": "Đăng nhập Frappe Cloud?",
+  "Are you sure you want to login to your Frappe Cloud dashboard?": "Bạn có chắc chắn muốn đăng nhập vào bảng điều khiển Frappe Cloud của mình không?",
+  "Confirm clearing demo data?": "Xác nhận xóa dữ liệu mẫu?",
+  "Are you sure you want to clear the demo data? This would delete the course \"A guide  to Frappe Learning\" along with all its associated data. This action cannot be undone.": "Bạn có chắc chắn muốn xóa dữ liệu mẫu? Thao tác này sẽ xóa khóa học \"A guide to Frappe Learning\" cùng với tất cả dữ liệu liên quan. Hành động này không thể hoàn tác.",
+  "Demo data cleared successfully": "Đã xóa dữ liệu mẫu thành công",
+  "Error clearing demo data": "Lỗi khi xóa dữ liệu mẫu"
+}
